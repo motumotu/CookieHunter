@@ -1,5 +1,7 @@
 $(function() {
     const MAX_PLAYER = 100;
+    const MOVE_SPEED = 5;
+    const PLAYER_SIZE = 50;
 
     //var io = require('socket.io-client');
     var container = document.getElementById("canvasContainer");
@@ -22,10 +24,14 @@ $(function() {
         this.id = 0;
         this.x = 0;
         this.y = 0;
+        this.mx = 0;
+        this.my = 0;
     }
     var MyState = function() {
         this.x = 0;
         this.y = 0;
+        this.mx = 0;
+        this.my = 0;
     }
 
     window.onload = function() {
@@ -58,8 +64,10 @@ $(function() {
     $("canvas").mousedown(function(e) {
         var mousex = e.clientX;
         var mousey = e.clientY;
-        my.x = mousex;
-        my.y = mousey;
+        //my.x = mousex;
+        //my.y = mousey;
+        my.mx = mousex - PLAYER_SIZE / 2;
+        my.my = mousey - PLAYER_SIZE / 2;
     });
     
     socket.on('add_player', function(data) {
@@ -84,13 +92,26 @@ $(function() {
         settingCanvas();
         loadImage();
         my = new MyState();
+        my.x = 100;
+        my.y = 100;
+        my.mx = 100;
+        my.my = 100;
         for (var i = 0; i < MAX_PLAYER; i++) {
             players[i] = new PlayerState();
         }
     }
 
     function update() {
-
+        if (Math.abs(my.x - my.mx) < 0.1 && Math.abs(my.y - my.my) < 0.1) return;
+        var dx = my.mx - my.x;
+        var dy = my.my - my.y;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        if (len >= MOVE_SPEED) {
+            dx *= MOVE_SPEED / len;
+            dy *= MOVE_SPEED / len;
+        }
+        my.x += dx;
+        my.y += dy;
     }
 
     function draw() {
