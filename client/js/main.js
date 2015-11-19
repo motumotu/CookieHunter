@@ -72,10 +72,13 @@ $(function() {
     
     socket.on('update_players', function(data) {
         console.log("update_players "+data.id+" "+data.x+" "+data.y);
-        //players[data.id] = data.id;
-        players[data.id].x = data.x;
-        players[data.id].y = data.y;
+        var n = data.id;
+        players[n].id = data.id;
+        players[n].x = data.x;
+        players[n].y = data.y;
     });
+
+    //socket.on('
 
     function init() {
         settingCanvas();

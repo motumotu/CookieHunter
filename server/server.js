@@ -7,25 +7,59 @@ var settings = require(__dirname + '/../config/settings');
 
 app.use(express.static(__dirname + '/../client'));
 
+const MAX_PLAYER = 100;
+var useId = [];
+var player = [];
+var idList = [];
+
 io.sockets.on('connection', function(socket) {
     console.log("client connected");
+    idList[socket.id] = getEmptyId();
+    useId[idList[socket.id]] = 1;
+    player[idList[socket.id]].id = idList[socket.id];
+
     socket.on('update', function(data) {
-        console.log("update "+data.x+" "+data.y);
+        player[idList[socket.id]].x = data.x;
+        player[idList[socket.id]].y = data.y;
         socket.broadcast.emit('update_players', {
-            id: 1,
+            id: idList[socket.id],
             x: data.x,
             y: data.y
-               
        });
     });
-    io.sockets.emit('add_player', {
-        id: 1,
+    // 他プレイヤーに接続を知らせる
+    socket.broadcast.emit('add_player', {
+        id: idList[socket.id],
         x: 100,
         y: 100
     });
+    // 既に接続しているプレイヤー情報を送信
+    socket.emit('players_state', player);
 });
 
 http.listen(settings.port, function() {
     console.log("server listen");
+    init();
 })
 
+
+function init() {
+    for (var i = 0; i <= MAX_PLAYER; i++) {
+        player[i] = new Player();
+        useId[i] = 0;
+    }
+}
+function getEmptyId() {
+    for (var i = 1; i <= MAX_PLAYER; i++) {
+        if (useId[i] == 0) return i;
+    }
+    return -1;
+}
+/*
+ * Playerクラス
+ */
+var Player = function() {
+    this.id = 0;
+    this.x = 0;
+    this.y = 0;
+}
