@@ -21,17 +21,24 @@ io.sockets.on('connection', function(socket) {
     socket.on('update', function(data) {
         player[idList[socket.id]].x = data.x;
         player[idList[socket.id]].y = data.y;
+        player[idList[socket.id]].x = data.mx;
+        player[idList[socket.id]].my = data.my;
+        console.log(data.x+" "+data.y+" "+data.mx+" "+data.my);
         socket.broadcast.emit('update_players', {
             id: idList[socket.id],
             x: data.x,
-            y: data.y
+            y: data.y,
+            mx: data.mx,
+            my: data.my
        });
     });
     // 他プレイヤーに接続を知らせる
     socket.broadcast.emit('add_player', {
         id: idList[socket.id],
         x: 100,
-        y: 100
+        y: 100,
+        mx: 100,
+        my: 100
     });
     // 既に接続しているプレイヤー情報を送信
     socket.emit('players_state', player);
@@ -62,4 +69,6 @@ var Player = function() {
     this.id = 0;
     this.x = 0;
     this.y = 0;
+    this.mx = 0;
+    this.my = 0;
 }

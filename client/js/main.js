@@ -71,19 +71,21 @@ $(function() {
     });
     
     socket.on('add_player', function(data) {
-        console.log("add_player "+data.id+" "+data.x+" "+data.y);
         var n = data.id;
         players[n].id = n;
         players[n].x = data.x;
         players[n].y = data.y;
+        players[n].mx = data.mx;
+        players[n].my = data.my;
     });
     
     socket.on('update_players', function(data) {
-        console.log("update_players "+data.id+" "+data.x+" "+data.y);
         var n = data.id;
         players[n].id = data.id;
-        players[n].x = data.x;
-        players[n].y = data.y;
+        //players[n].x = data.x;
+        //players[n].y = data.y;
+        players[n].mx = data.mx;
+        players[n].my = data.my;
     });
 
     //socket.on('
@@ -102,6 +104,11 @@ $(function() {
     }
 
     function update() {
+        updateMy();
+        updatePlayers();
+    }
+    // 自分の位置更新 
+    function updateMy() {
         if (Math.abs(my.x - my.mx) < 0.1 && Math.abs(my.y - my.my) < 0.1) return;
         var dx = my.mx - my.x;
         var dy = my.my - my.y;
@@ -112,6 +119,22 @@ $(function() {
         }
         my.x += dx;
         my.y += dy;
+    }
+    // 他プレイヤーたちの更新
+    function updatePlayers() {
+        for (var i = 0; i < MAX_PLAYER; i++) {
+            if (players[i].id == 0) continue;
+            var dx = players[i].mx - players[i].x;
+            var dy = players[i].my - players[i].y;
+            if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) continue;
+            var len = Math.sqrt(dx * dx + dy * dy);
+            if (len >= MOVE_SPEED) {
+                dx *= MOVE_SPEED / len;
+                dy *= MOVE_SPEED / len;
+            }
+            players[i].x += dx;
+            players[i].y += dy;
+        }
     }
 
     function draw() {
@@ -147,7 +170,6 @@ $(function() {
     function drawPlayer() {
         for (var i = 0; i < MAX_PLAYER; i++) {
             if (players[i].id == 0) continue;
-            console.log("draw "+players[i].x+" "+players[i].y);
             context.drawImage(imagePlayer, players[i].x, players[i].y);
         }
     }
