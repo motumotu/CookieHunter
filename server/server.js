@@ -13,18 +13,18 @@ var player = [];
 var idList = [];
 
 io.sockets.on('connection', function(socket) {
-    console.log("client connected");
     idList[socket.id] = getEmptyId();
     useId[idList[socket.id]] = 1;
     player[idList[socket.id]].id = idList[socket.id];
-
+    console.log("client connected! "+socket.id+" "+idList[socket.id]);
+    
     socket.on('update', function(data) {
         player[idList[socket.id]].x = data.x;
         player[idList[socket.id]].y = data.y;
         player[idList[socket.id]].x = data.mx;
         player[idList[socket.id]].my = data.my;
         player[idList[socket.id]].cookieNum = data.cookieNum;
-        console.log(data.x+" "+data.y+" "+data.mx+" "+data.my);
+        //console.log(data.x+" "+data.y+" "+data.mx+" "+data.my);
         socket.broadcast.emit('update_players', {
             id: idList[socket.id],
             x: data.x,
@@ -45,6 +45,11 @@ io.sockets.on('connection', function(socket) {
     });
     // 既に接続しているプレイヤー情報を送信
     socket.emit('players_state', player);
+    // 切断時
+    socket.on('disconnect', function() {
+        console.log("client disconnected!!");
+        useId[idList[socket.id]] = 0;
+    });
 });
 
 http.listen(settings.port, function() {
