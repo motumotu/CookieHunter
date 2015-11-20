@@ -92,6 +92,7 @@ $(function() {
         players[n].y = data.y;
         players[n].mx = data.mx;
         players[n].my = data.my;
+        players[n].cookieNum = data.cookieNum;
     });
     
     socket.on('update_players', function(data) {
@@ -101,6 +102,7 @@ $(function() {
         //players[n].y = data.y;
         players[n].mx = data.mx;
         players[n].my = data.my;
+        players[n].cookieNum = data.cookieNum;
     });
 
     //socket.on('
@@ -185,11 +187,20 @@ $(function() {
 
     function drawMy() {
         context.drawImage(imagePlayer, my.x, my.y);
+        context.fillStyle = "black";
+        context.font = "italic 15px sans-serif";
+        context.fillText(my.cookieNum, my.x + 5, my.y + 40)
     }
     function drawPlayer() {
+        context.fillStyle = "black";
+        context.font = "italic 15px sans-serif";
         for (var i = 0; i < MAX_PLAYER; i++) {
+            // キャラ画像
             if (players[i].id == 0) continue;
             context.drawImage(imagePlayer, players[i].x, players[i].y);
+            // クッキーの枚数
+            context.fillText(players[i].cookieNum, players[i].x + 5, players[i].y + 40);
+
         }
     }
     function drawCookie() {

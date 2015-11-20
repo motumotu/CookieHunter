@@ -23,14 +23,16 @@ io.sockets.on('connection', function(socket) {
         player[idList[socket.id]].y = data.y;
         player[idList[socket.id]].x = data.mx;
         player[idList[socket.id]].my = data.my;
+        player[idList[socket.id]].cookieNum = data.cookieNum;
         console.log(data.x+" "+data.y+" "+data.mx+" "+data.my);
         socket.broadcast.emit('update_players', {
             id: idList[socket.id],
             x: data.x,
             y: data.y,
             mx: data.mx,
-            my: data.my
-       });
+            my: data.my,
+            cookieNum: data.cookieNum
+        });
     });
     // 他プレイヤーに接続を知らせる
     socket.broadcast.emit('add_player', {
@@ -38,7 +40,8 @@ io.sockets.on('connection', function(socket) {
         x: 100,
         y: 100,
         mx: 100,
-        my: 100
+        my: 100,
+        cookieNum: 100
     });
     // 既に接続しているプレイヤー情報を送信
     socket.emit('players_state', player);
@@ -71,4 +74,5 @@ var Player = function() {
     this.y = 0;
     this.mx = 0;
     this.my = 0;
+    this.cookieNum = 0;
 }
