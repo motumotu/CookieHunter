@@ -102,14 +102,33 @@ $(function() {
     
     socket.on('update_players', function(data) {
         var n = data.id;
+        if (players[n].id == 0) {
+            players[n].x = data.x;
+            players[n].y = data.y; 
+        }
         players[n].id = data.id;
-        //players[n].x = data.x;
-        //players[n].y = data.y;
         players[n].mx = data.mx;
         players[n].my = data.my;
         players[n].cookieNum = data.cookieNum;
     });
 
+    //---- 全プレイヤー情報
+    /*
+    socket.on('players_state', function(data) {
+        console.log(data);
+        for (var i = 1; i <= MAX_PLAYER; i++) {
+            if (data[i].id == 0) continue;
+            players[i].id = data.id;
+            players[i].x = data.x;
+            players[i].y = data.y;
+            players[i].mx = data.mx;
+            players[i].my = data.my;
+            players[i].cookieNum = data.cookieNum;
+        }
+    });
+    */
+
+    //---- 他プレイヤー切断時
     socket.on('disconnected_player', function(data) {
         players[data].id = 0;
     });

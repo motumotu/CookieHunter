@@ -16,6 +16,11 @@ io.sockets.on('connection', function(socket) {
     idList[socket.id] = getEmptyId();
     useId[idList[socket.id]] = 1;
     player[idList[socket.id]].id = idList[socket.id];
+    player[idList[socket.id]].x = 100;
+    player[idList[socket.id]].y = 100;
+    player[idList[socket.id]].mx = 100;
+    player[idList[socket.id]].my = 100;
+    player[idList[socket.id]].cookieNum = 0;
     console.log("client connected! "+socket.id+" "+idList[socket.id]);
     
     socket.on('update', function(data) {
@@ -49,6 +54,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log("client disconnected!!");
         socket.broadcast.emit('disconnected_player', idList[socket.id]);
+        player[idList[socket.id]].id = 0;
         useId[idList[socket.id]] = 0;
     });
 });
@@ -62,6 +68,7 @@ http.listen(settings.port, function() {
 function init() {
     for (var i = 0; i <= MAX_PLAYER; i++) {
         player[i] = new Player();
+        player[i].id = 0;
         useId[i] = 0;
     }
 }
