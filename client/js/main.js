@@ -80,8 +80,8 @@ $(function() {
             //my.my = mousey - PLAYER_SIZE / 2;
             var dx = mousex - (getX() + PLAYER_SIZE / 2);
             var dy = mousey - (getY() + PLAYER_SIZE / 2);
-            my.mx += dx;
-            my.my += dy;
+            my.mx = my.x + dx;
+            my.my = my.y + dy;
         }
         //---- クッキーのクリック
         if (mousex >= COOKIE_POS_X && mousex <= COOKIE_POS_X + COOKIE_SIZE &&
@@ -180,13 +180,15 @@ $(function() {
     }
 
     function drawMap() {
+        var ix = getX();
+        var iy = getY();
         for (var y = 0; y < 50; y++) {
             for (var x = 0; x < 50; x++) {
-                var px = 40 * x;
-                var py = 40 * y;
+                var px = ix + 40 * x - my.x;
+                var py = iy + 40 * y - my.y;
                 if (px > canvas.width) break;
                 if (py > canvas.height) break;
-                context.drawImage(imageMap, 40 * x, 40 * y);
+                context.drawImage(imageMap, px, py);
             }
         }
     }
