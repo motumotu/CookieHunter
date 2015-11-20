@@ -3,12 +3,17 @@ $(function() {
     const MOVE_SPEED = 5;
     const PLAYER_SIZE = 50;
 
+    const COOKIE_POS_X = 30;
+    const COOKIE_POS_Y = 30;
+    const COOKIE_SIZE = 150;
+
     //var io = require('socket.io-client');
     var container = document.getElementById("canvasContainer");
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     var imageMap;
     var imagePlayer;
+    var imageCookie;
     var wait = 100;
     var my;
     var queue = null;
@@ -26,12 +31,14 @@ $(function() {
         this.y = 0;
         this.mx = 0;
         this.my = 0;
+        this.cookieNum = 0;
     }
     var MyState = function() {
         this.x = 0;
         this.y = 0;
         this.mx = 0;
         this.my = 0;
+        this.cookieNum = 0;
     }
 
     window.onload = function() {
@@ -66,8 +73,16 @@ $(function() {
         var mousey = e.clientY;
         //my.x = mousex;
         //my.y = mousey;
-        my.mx = mousex - PLAYER_SIZE / 2;
-        my.my = mousey - PLAYER_SIZE / 2;
+        //---- バトルエリア
+        if (mousex >= 210) {
+            my.mx = mousex - PLAYER_SIZE / 2;
+            my.my = mousey - PLAYER_SIZE / 2;
+        }
+        //---- クッキーのクリック
+        if (mousex >= COOKIE_POS_X && mousex <= COOKIE_POS_X + COOKIE_SIZE &&
+            mousey >= COOKIE_POS_Y && mousey <= COOKIE_POS_Y + COOKIE_SIZE) {
+            my.cookieNum++;
+        }
     });
     
     socket.on('add_player', function(data) {
@@ -98,6 +113,7 @@ $(function() {
         my.y = 100;
         my.mx = 100;
         my.my = 100;
+        my.cookieNum = 100;
         for (var i = 0; i < MAX_PLAYER; i++) {
             players[i] = new PlayerState();
         }
@@ -143,13 +159,16 @@ $(function() {
         drawMap();
         drawMy();
         drawPlayer();
+        drawCookie();
     }
 
     function loadImage() {
         imageMap = new Image();
         imagePlayer = new Image();
+        imageCookie = new Image();
         imageMap.src = "image/map1.png";
         imagePlayer.src = "image/player.png";
+        imageCookie.src = "image/cookie.png";
     }
 
     function drawMap() {
@@ -172,5 +191,14 @@ $(function() {
             if (players[i].id == 0) continue;
             context.drawImage(imagePlayer, players[i].x, players[i].y);
         }
+    }
+    function drawCookie() {
+        context.fillStyle="rgba(40,40,40,0.5)";
+        context.fillRect(0, 0, 210, canvas.height);
+        context.drawImage(imageCookie, COOKIE_POS_X, COOKIE_POS_Y);
+        context.fillRect(0, 10, 210, 40);
+        context.fillStyle = "white";
+        context.font = "italic  30px sans-serif";
+        context.fillText(my.cookieNum+" Cookie", 30, 40);
     }
 })
