@@ -48,6 +48,7 @@ io.sockets.on('connection', function(socket) {
     // 切断時
     socket.on('disconnect', function() {
         console.log("client disconnected!!");
+        socket.broadcast.emit('disconnected_player', idList[socket.id]);
         useId[idList[socket.id]] = 0;
     });
 });

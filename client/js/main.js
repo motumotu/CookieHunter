@@ -110,7 +110,9 @@ $(function() {
         players[n].cookieNum = data.cookieNum;
     });
 
-    //socket.on('
+    socket.on('disconnected_player', function(data) {
+        players[data].id = 0;
+    });
 
     function init() {
         settingCanvas();
