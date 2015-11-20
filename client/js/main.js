@@ -6,6 +6,7 @@ $(function() {
     const COOKIE_POS_X = 30;
     const COOKIE_POS_Y = 30;
     const COOKIE_SIZE = 150;
+    const BATTLE_AREA_POS_X = 210;
 
     //var io = require('socket.io-client');
     var container = document.getElementById("canvasContainer");
@@ -74,9 +75,13 @@ $(function() {
         //my.x = mousex;
         //my.y = mousey;
         //---- バトルエリア
-        if (mousex >= 210) {
-            my.mx = mousex - PLAYER_SIZE / 2;
-            my.my = mousey - PLAYER_SIZE / 2;
+        if (mousex >= BATTLE_AREA_POS_X) {
+            //my.mx = mousex - PLAYER_SIZE / 2;
+            //my.my = mousey - PLAYER_SIZE / 2;
+            var dx = mousex - (getX() + PLAYER_SIZE / 2);
+            var dy = mousey - (getY() + PLAYER_SIZE / 2);
+            my.mx += dx;
+            my.my += dy;
         }
         //---- クッキーのクリック
         if (mousex >= COOKIE_POS_X && mousex <= COOKIE_POS_X + COOKIE_SIZE &&
@@ -138,6 +143,7 @@ $(function() {
         my.x += dx;
         my.y += dy;
     }
+
     // 他プレイヤーたちの更新
     function updatePlayers() {
         for (var i = 0; i < MAX_PLAYER; i++) {
@@ -186,23 +192,31 @@ $(function() {
     }
 
     function drawMy() {
-        context.drawImage(imagePlayer, my.x, my.y);
+        var px = getX();
+        var py = getY();
+        context.drawImage(imagePlayer, px, py);
         context.fillStyle = "black";
         context.font = "italic 15px sans-serif";
-        context.fillText(my.cookieNum, my.x + 5, my.y + 40)
+        //context.fillText(my.cookieNum, my.x + 5, my.y + 40);
+        context.fillText(my.cookieNum, px + 5, py + 40);
     }
+
     function drawPlayer() {
+        var px = getX();
+        var py = getY();
         context.fillStyle = "black";
         context.font = "italic 15px sans-serif";
         for (var i = 0; i < MAX_PLAYER; i++) {
             // キャラ画像
             if (players[i].id == 0) continue;
-            context.drawImage(imagePlayer, players[i].x, players[i].y);
+            console.log(my.x+" "+players[i].x+" "+my.y+" "+players[i].y);
+            context.drawImage(imagePlayer, px - (my.x - players[i].x), py - (my.y - players[i].y));
             // クッキーの枚数
-            context.fillText(players[i].cookieNum, players[i].x + 5, players[i].y + 40);
-
+            //context.fillText(players[i].cookieNum, px + players[i].x + 5, py + players[i].y + 40);
+            context.fillText(players[i].cookieNum, px - (my.x - players[i].x) + 5, py - (my.y - players[i].y) + 40);
         }
     }
+
     function drawCookie() {
         context.fillStyle="rgba(40,40,40,0.5)";
         context.fillRect(0, 0, 210, canvas.height);
@@ -211,5 +225,13 @@ $(function() {
         context.fillStyle = "white";
         context.font = "italic  30px sans-serif";
         context.fillText(my.cookieNum+" Cookie", 30, 40);
+    }
+
+    function getX() {
+        return (canvas.width - BATTLE_AREA_POS_X) / 2 + BATTLE_AREA_POS_X - PLAYER_SIZE / 2;
+    }
+
+    function getY() {
+        return canvas.height / 2 - PLAYER_SIZE / 2;
     }
 })
