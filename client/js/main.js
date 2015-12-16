@@ -8,6 +8,10 @@ $(function() {
     const COOKIE_SIZE = 150;
     const BATTLE_AREA_POS_X = 210;
 
+	const MAP_SIZE = 40;
+	const MAP_NUM_X = 20;
+	const MAP_NUM_Y = 20;
+
     //var io = require('socket.io-client');
     var container = document.getElementById("canvasContainer");
     var canvas = document.getElementById("canvas");
@@ -163,6 +167,12 @@ $(function() {
         }
         my.x += dx;
         my.y += dy;
+		//---- 範囲外補正
+		var mxsize = MAP_SIZE * MAP_NUM_X - PLAYER_SIZE;
+		if (my.x < 0) my.x = 0;
+		if (my.x >= mxsize) my.x = mxsize;
+		if (my.y < 0) my.y = 0;
+		if (my.y >= mxsize) my.y = mxsize;
     }
 
     // 他プレイヤーたちの更新
@@ -203,10 +213,10 @@ $(function() {
     function drawMap() {
         var ix = getX();
         var iy = getY();
-        for (var y = 0; y < 50; y++) {
-            for (var x = 0; x < 50; x++) {
-                var px = ix + 40 * x - my.x;
-                var py = iy + 40 * y - my.y;
+        for (var y = 0; y < MAP_NUM_Y; y++) {
+            for (var x = 0; x < MAP_NUM_X; x++) {
+                var px = ix + MAP_SIZE * x - my.x;
+                var py = iy + MAP_SIZE * y - my.y;
                 if (px > canvas.width) break;
                 if (py > canvas.height) break;
                 context.drawImage(imageMap, px, py);
