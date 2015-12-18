@@ -20,7 +20,7 @@ io.sockets.on('connection', function(socket) {
     player[idList[socket.id]].y = 100;
     player[idList[socket.id]].mx = 100;
     player[idList[socket.id]].my = 100;
-    player[idList[socket.id]].cookieNum = 0;
+    player[idList[socket.id]].cookieNum = 100;
     console.log("client connected! "+socket.id+" "+idList[socket.id]);
    
 	/*
@@ -43,7 +43,7 @@ io.sockets.on('connection', function(socket) {
             y: data.y,
             mx: data.mx,
             my: data.my,
-            cookieNum: data.cookieNum
+            cookieNum: player[idList[socket.id]].cookieNum
         });
     });
     // 他プレイヤーに接続を知らせる
