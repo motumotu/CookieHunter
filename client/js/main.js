@@ -37,6 +37,7 @@ $(function() {
         this.mx = 0;
         this.my = 0;
         this.cookieNum = 0;
+		this.addNum = 0;
     }
     var MyState = function() {
         this.x = 0;
@@ -59,6 +60,7 @@ $(function() {
 
     function emitServer() {
         socket.emit('update', my);
+		my.addNum = 0;
     }
 
     window.addEventListener("resize", function() {
@@ -91,6 +93,7 @@ $(function() {
         if (mousex >= COOKIE_POS_X && mousex <= COOKIE_POS_X + COOKIE_SIZE &&
             mousey >= COOKIE_POS_Y && mousey <= COOKIE_POS_Y + COOKIE_SIZE) {
             my.cookieNum++;
+			my.addNum++;
         }
     });
     
@@ -146,6 +149,7 @@ $(function() {
         my.mx = 100;
         my.my = 100;
         my.cookieNum = 100;
+		my.addNum = 0;
         for (var i = 0; i < MAX_PLAYER; i++) {
             players[i] = new PlayerState();
         }
@@ -189,6 +193,12 @@ $(function() {
             }
             players[i].x += dx;
             players[i].y += dy;
+			//---- 範囲外補正
+			var mxsize = MAP_SIZE * MAP_NUM_X - PLAYER_SIZE;
+			if (players[i].x < 0) players[i].x = 0;
+			if (players[i].x >= mxsize) players[i].x = mxsize;
+			if (players[i].y < 0) players[i].y = 0;
+			if (players[i].y >= mxsize) players[i].y = mxsize;
         }
     }
 

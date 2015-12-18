@@ -22,13 +22,20 @@ io.sockets.on('connection', function(socket) {
     player[idList[socket.id]].my = 100;
     player[idList[socket.id]].cookieNum = 0;
     console.log("client connected! "+socket.id+" "+idList[socket.id]);
-    
+   
+	/*
+	 * 更新状態
+	 */
     socket.on('update', function(data) {
         player[idList[socket.id]].x = data.x;
         player[idList[socket.id]].y = data.y;
         player[idList[socket.id]].x = data.mx;
         player[idList[socket.id]].my = data.my;
-        player[idList[socket.id]].cookieNum = data.cookieNum;
+		// 枚数のバリデーション
+		if (!isNaN(data.addNum) && data.addNum >= 0 && data.addNum <= 20) {
+			player[idList[socket.id]].cookieNum += data.addNum;
+		}
+        //player[idList[socket.id]].cookieNum = data.cookieNum;
         //console.log(data.x+" "+data.y+" "+data.mx+" "+data.my);
         socket.broadcast.emit('update_players', {
             id: idList[socket.id],
